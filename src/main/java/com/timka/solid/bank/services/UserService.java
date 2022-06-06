@@ -30,7 +30,7 @@ public class UserService implements UserDetailsService {
     private final RoleRepository roleRepository;
 
     public Optional<User> findByUsername(String username) {
-        return userRepository.findByUsername(username);
+        return userRepository.findUserByUsername(username);
     }
 
 
@@ -46,7 +46,7 @@ public class UserService implements UserDetailsService {
     }
 
     public BodyResponse register(JwtRequest jwtRequest) {
-        Optional<User> user = userRepository.findByUsername(jwtRequest.getUsername());
+        Optional<User> user = userRepository.findUserByUsername(jwtRequest.getUsername());
         if (user.isPresent()) {
             return new BodyResponse("User exists", Response.Status.CONFLICT, null);
         }

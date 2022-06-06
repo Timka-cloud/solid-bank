@@ -32,11 +32,8 @@ public class AccountController {
 
 
     @GetMapping
-    public ResponseEntity<ResponseManyAcc> getClientAccounts(HttpServletRequest request) {
-
-        String jwtToken = request.getHeader("Authorization").replace("Bearer ", "");
-        System.out.println(jwtToken);
-        List<AccountDto> clientAccounts = accountService.getClientAccounts(jwtToken);
+    public ResponseEntity<ResponseManyAcc> getClientAccounts(Principal principal) {
+        List<AccountDto> clientAccounts = accountService.getClientAccounts(principal.getName());
         return new ResponseEntity<>(ResponseManyAcc.builder().statusCode(HttpStatus.OK.value()).message(clientAccounts.size() + " accounts returned").accountList(clientAccounts).build(), HttpStatus.OK);
     }
 
@@ -47,8 +44,8 @@ public class AccountController {
     }
 
     @GetMapping("/{account_id}")
-    public ResponseEntity<ResponseSingleAcc> getClientAccount(@PathVariable(name = "account_id") String fullAccountId) {
-        AccountDto clientAccount = accountService.getClientAccount(fullAccountId);
+    public ResponseEntity<ResponseSingleAcc> getClientAccount(@PathVariable(name = "account_id") String fullAccountId, Principal principal) {
+        AccountDto clientAccount = accountService.getClientAccount(fullAccountId, principal.getName());
         return new ResponseEntity<>(ResponseSingleAcc.builder().statusCode(HttpStatus.OK.value()).message("1 account returned").accountDto(clientAccount).build(), HttpStatus.OK);
     }
 

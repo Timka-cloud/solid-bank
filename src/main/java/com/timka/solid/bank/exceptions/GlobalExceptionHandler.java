@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 @ControllerAdvice
-public class AccountExceptionHandler
+public class GlobalExceptionHandler
 {
     @ResponseBody
     @ExceptionHandler(AccountNotFound.class)
@@ -33,5 +33,11 @@ public class AccountExceptionHandler
     @ExceptionHandler(AccountWithdrawException.class)
     public ExceptionMessage withdrawMoney(AccountWithdrawException ex) {
         return new ExceptionMessage(ex.getMessage(), HttpStatus.OK.value());
+    }
+
+    @ResponseBody
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ExceptionMessage> withdrawMoney(UserNotFoundException ex) {
+        return new ResponseEntity<>(new ExceptionMessage(ex.getMessage(), HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND);
     }
 }

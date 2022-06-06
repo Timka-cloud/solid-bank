@@ -13,6 +13,7 @@ import com.timka.solid.bank.response.BodyResponse;
 import com.timka.solid.bank.utils.JwtTokenUtil;
 import com.timka.solid.bank.utils.ParsedToken;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -72,8 +73,12 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountDto getClientAccount(String accountID) {
-        Account account = accountDAO.findAccountByAccountFullId(accountID);
+    public AccountDto getClientAccount(String accountID, String username) {
+        Optional<User> user = userRepository.findUserByUsername(username);
+        if (user.isEmpty()) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        Account account = accountDAO.findAccountByAccountFullIdAndClientID(accountID, user.get().getId().toString());
         if(account == null) {
             throw new AccountNotFound("Account not found by " + accountID);
         }
@@ -87,12 +92,10 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public List<AccountDto> getClientAccounts(String token) {
-        String name = jwtTokenUtil.getUsernameFromToken(token);
-        System.out.println(name);
-        Optional<User> user = userRepository.findByUsername(name);
+    public List<AccountDto> getClientAccounts(String username) {
+        Optional<User> user = userRepository.findUserByUsername(username);
         if (user.isEmpty()) {
-            throw new AccountNotFound("Account not found");
+            throw new UsernameNotFoundException("User not found");
         }
         List<Account> accountList = accountDAO.findAccountsByClientID(String.valueOf(user.get().getId()));
         return accountList.stream().map(a -> new AccountDto(a.getAccountFullId(), a.getAccountType(), a.getClientID(), a.getBalance(), a.isWithdrawAllowed())).collect(Collectors.toList());

@@ -11,7 +11,7 @@ public interface AccountService {
     void deleteById(String fullAccountId);
 
     public void deposit(String accountFullId, double amount);
-    AccountDto getClientAccount(String accountID);
+    AccountDto getClientAccount(String accountID, String username);
     AccountWithdraw getClientWithdrawAccount(String clientID, String accountID);
     List<AccountDto> getClientAccounts(String username);
     void withdraw(double amount, String accountFullID);

@@ -14,6 +14,7 @@ import java.util.List;
 public interface AccountDAO extends CrudRepository<Account, Long> {
     List<Account> findAccountsByClientID(String id);
     Account findAccountByAccountFullId(String accountID);
+    Account findAccountByAccountFullIdAndClientID(String accountID, String clientId);
 
     @Modifying
     @Query(value = "update Account a set a.account_full_id = :accountFullId where a.id = :accountID and a.client_id = :clientId", nativeQuery = true)
